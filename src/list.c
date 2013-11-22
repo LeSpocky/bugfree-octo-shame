@@ -48,7 +48,7 @@ void list_clear_destroy( struct list *list ) {
     list_destroy( list );
 }
 
-void list_push( struct list *list, void *value ) {
+void list_push( struct list *list, pthread_t value ) {
     struct node *node = calloc( 1, sizeof(struct node) );
 
     /*  check   */
@@ -72,17 +72,17 @@ leave_list_push:
     return;
 }
 
-void* list_pop( struct list *list ) {
+pthread_t list_pop( struct list *list ) {
     struct node *node;
 
     assert( list );
 
     node = list->last;
-    return node != NULL ? list_remove( list, node ) : NULL;
+    return node != NULL ? list_remove( list, node ) : 0;
 }
 
-void* list_remove( struct list *list, struct node *node ) {
-    void *result = NULL;
+pthread_t list_remove( struct list *list, struct node *node ) {
+    pthread_t result = 0;
 
     assert( list );
     assert( node );

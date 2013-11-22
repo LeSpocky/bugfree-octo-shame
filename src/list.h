@@ -1,7 +1,8 @@
 /*******************************************************************//**
  *  @file   list.h
  *
- *  @brief  declarations for a double linked list
+ *  @brief  declarations for a double linked list containing pthread_t
+ *          as values
  *
  *  @author Alexander Dahl <post@lespocky.de>
  *
@@ -26,6 +27,8 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
+#include <pthread.h>
+
 #define list_count(A)   ((A)->count)
 #define list_first(A)   ((A)->first != NULL ? (A)->first->value : NULL)
 #define list_last(A)    ((A)->last != NULL ? (A)->last->value : NULL)
@@ -33,7 +36,7 @@
 struct node {
     struct node *prev;
     struct node *next;
-    void        *value;
+    pthread_t   value;
 };
 
 struct list {
@@ -47,9 +50,9 @@ void list_destroy( struct list *list );
 void list_clear( struct list *list );
 void list_clear_destroy( struct list *list );
 
-void list_push( struct list *list, void *value );
-void* list_pop( struct list *list );
+void list_push( struct list *list, pthread_t value );
+pthread_t list_pop( struct list *list );
 
-void* list_remove( struct list *list, struct node *node );
+pthread_t list_remove( struct list *list, struct node *node );
 
 #endif /* _LIST_H_ */
