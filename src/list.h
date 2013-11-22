@@ -42,7 +42,7 @@ struct list {
     struct node *last;
 };
 
-struct list* list_create();
+struct list* list_create( void );
 void list_destroy( struct list *list );
 void list_clear( struct list *list );
 void list_clear_destroy( struct list *list );

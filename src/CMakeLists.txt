@@ -1,3 +1,4 @@
 add_executable(${PROJECT_NAME}
-    main.c
+    "main.c"
+    "list.c"
 )
