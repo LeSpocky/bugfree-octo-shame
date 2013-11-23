@@ -46,9 +46,15 @@ struct list {
 };
 
 struct list* list_create( void );
+
+/**
+ *  Free list elements itself and free list then.
+ *
+ *  @attention  You have to ensure to free the values inside before!
+ *
+ *  @param[in]  *list   pointer to list
+ */
 void list_destroy( struct list *list );
-void list_clear( struct list *list );
-void list_clear_destroy( struct list *list );
 
 void list_push( struct list *list, pthread_t value );
 pthread_t list_pop( struct list *list );

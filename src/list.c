@@ -34,18 +34,16 @@ struct list* list_create( void ) {
 }
 
 void list_destroy( struct list *list ) {
-    assert( list );
-}
+    struct node *node;
 
-void list_clear( struct list *list ) {
-    assert( list );
-}
-
-void list_clear_destroy( struct list *list ) {
     assert( list );
 
-    list_clear( list );
-    list_destroy( list );
+    for ( node = list->first; node; node = node->next ) {
+        if ( node->prev ) free( node->prev );
+    }
+
+    free( list->last );
+    free( list );
 }
 
 void list_push( struct list *list, pthread_t value ) {
