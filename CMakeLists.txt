@@ -17,3 +17,7 @@ if(DOXYGEN_FOUND)
         SOURCES ${PROJECT_SOURCE_DIR}/Doxyfile.in
     )
 endif(DOXYGEN_FOUND)
+
+# test
+enable_testing()
+add_subdirectory( "test" )
