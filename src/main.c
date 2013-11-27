@@ -47,19 +47,31 @@ void *do_something( void *arg );
 int main( int argc, char **argv ) {
 	bool		run = true;
 	int			err, max_thread_count = 0, prev_thread_count = 0;
-	void		*retval;
 	pthread_t	id;
 	struct list	*list;
 	struct node	*cur, *node;
+	time_t		now, start_time, to_run = 120;
+	void		*retval;
 
+	/*	get argv and prepare timeout	*/
+	if ( argc > 1 ) {
+		if ( atoi( argv[1] ) ) {
+			to_run = atoi( argv[1] );
+		}
+	}
+	(void) printf( "Will run for %i seconds ...\n", to_run );
+
+	start_time = time( NULL );
+	srand( start_time );
+
+	/*	create list	*/
 	list = list_create();
 	if ( list == NULL ) {
 		(void) fputs( "Failed to create list!\n", stderr );
 		return EXIT_FAILURE;
 	}
 
-	srand( time( NULL ) );
-
+	/*	loop for creating and joining as much threads as possible	*/
 	while ( run ) {
 		/*	create a new thread and put it into our list	*/
 		err = pthread_create( &id, NULL, do_something, NULL );
@@ -107,6 +119,10 @@ int main( int argc, char **argv ) {
 				max_thread_count = list_count( list );
 			}
 		}
+
+		/*	timeout handling	*/
+		now = time( NULL );
+		if ( difftime( now, start_time ) > to_run ) run = false;
 	}
 
 	/*	join remaining threads	*/
@@ -123,6 +139,9 @@ int main( int argc, char **argv ) {
 	}
 
 	list_destroy( list );
+
+	(void) printf( "Max. %i threads were running ...\n",
+			max_thread_count );
 
 	return EXIT_SUCCESS;
 }
