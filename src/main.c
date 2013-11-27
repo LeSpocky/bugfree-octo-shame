@@ -49,7 +49,7 @@ void *do_something( void *arg );
 
 int main( int argc, char **argv ) {
 	bool			run = true;
-	int				err, max_thread_count = 0, prev_thread_count = 0;
+	int				err, max_list_entries = 0, prev_node_count = 0;
 	pthread_t		id;
 	struct list		*list;
 	struct node		*cur, *node;
@@ -116,11 +116,12 @@ int main( int argc, char **argv ) {
 		}
 
 		/*	print statistics	*/
-		if ( prev_thread_count != list_count( list ) ) {
-			(void) printf( "Threads running: %i\n", list_count( list ) );
-			prev_thread_count = list_count( list );
-			if ( list_count( list ) > max_thread_count ) {
-				max_thread_count = list_count( list );
+		if ( prev_node_count != list_count( list ) ) {
+			(void) printf( "Thread list contains %i threads ...\n",
+					list_count( list ) );
+			prev_node_count = list_count( list );
+			if ( list_count( list ) > max_list_entries ) {
+				max_list_entries = list_count( list );
 			}
 		}
 
@@ -144,8 +145,8 @@ int main( int argc, char **argv ) {
 
 	list_destroy( list );
 
-	(void) printf( "Max. %i threads were running ...\n",
-			max_thread_count );
+	(void) printf( "Our thread list contained max. %i entries ...\n",
+			max_list_entries );
 
 	err = getrlimit( RLIMIT_NPROC, &rlim );
 	if ( err ) {
