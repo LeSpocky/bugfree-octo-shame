@@ -35,9 +35,12 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include <pthread.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include <unistd.h>
 
 #include "list.h"
@@ -45,13 +48,14 @@
 void *do_something( void *arg );
 
 int main( int argc, char **argv ) {
-	bool		run = true;
-	int			err, max_thread_count = 0, prev_thread_count = 0;
-	pthread_t	id;
-	struct list	*list;
-	struct node	*cur, *node;
-	time_t		now, start_time, to_run = 120;
-	void		*retval;
+	bool			run = true;
+	int				err, max_thread_count = 0, prev_thread_count = 0;
+	pthread_t		id;
+	struct list		*list;
+	struct node		*cur, *node;
+	struct rlimit	rlim;
+	time_t			now, start_time, to_run = 120;
+	void			*retval;
 
 	/*	get argv and prepare timeout	*/
 	if ( argc > 1 ) {
@@ -142,6 +146,16 @@ int main( int argc, char **argv ) {
 
 	(void) printf( "Max. %i threads were running ...\n",
 			max_thread_count );
+
+	err = getrlimit( RLIMIT_NPROC, &rlim );
+	if ( err ) {
+		(void) fprintf( stderr,
+				"Error (%i) getting system limits: %s\n",
+				strerror( errno ) );
+	} else {
+		(void) printf( "RLIMIT_NPROC soft = %i, hard = %i\n",
+				rlim.rlim_cur, rlim.rlim_max );
+	}
 
 	return EXIT_SUCCESS;
 }
