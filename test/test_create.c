@@ -14,19 +14,22 @@
  *
  *  _bugfree-octo-shame_ is distributed in the hope that it will be
  *  useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- *  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
  *  along with Foobar. If not, see <http://www.gnu.org/licenses/>.
  **********************************************************************/
 
+#include <stddef.h>
 #include <stdlib.h>
 
 #include "list.h"
 
 int main( int argc, char **argv ) {
+    struct list *list = NULL;
 
-//    return EXIT_SUCCESS;
-    return EXIT_FAILURE;
+    list = list_create();
+
+    return (list == NULL) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
