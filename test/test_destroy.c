@@ -1,5 +1,5 @@
 /*******************************************************************//**
- *	@file	test_create.c
+ *	@file	test_destroy.c
  *
  *	@author	Alexander Dahl <post@lespocky.de>
  *
@@ -23,6 +23,7 @@
  **********************************************************************/
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "list.h"
@@ -31,8 +32,14 @@ int main( int argc, char **argv ) {
 	struct list *list = NULL;
 
 	list = list_create();
+	if ( list == NULL ) {
+		(void) fputs( "Failed to create list!\n", stderr );
+		return EXIT_FAILURE;
+	}
 
-	return (list == NULL) ? EXIT_FAILURE : EXIT_SUCCESS;
+	list_destroy( list );
+
+	return EXIT_SUCCESS;
 }
 
 /* vim: set noet sts=0 ts=4 sw=4 sr: */
