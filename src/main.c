@@ -30,13 +30,79 @@
  *	<http://www.gnu.org/licenses/>.
  **********************************************************************/
 
+#include <errno.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+
+#include <pthread.h>
+#include <unistd.h>
 
 #include "list.h"
 
+void *do_something( void *arg );
+
 int main( int argc, char **argv ) {
+	int			err, i;
+	void		*retval;
+	pthread_t	id;
+	struct list	*list;
+	struct node	*node;
+
+	list = list_create();
+	if ( list == NULL ) {
+		(void) fputs( "Failed to create list!\n", stderr );
+		return EXIT_FAILURE;
+	}
+
+	srand( time( NULL ) );
+
+	i = 10;
+	while ( i-- ) {
+		/*	create a new thread and put it into our list	*/
+		err = pthread_create( &id, NULL, do_something, NULL );
+		if ( err == EAGAIN ) {
+			continue;
+		} else if ( err ) {
+			(void) fprintf( stderr, "Error (%i) creating thread!\n", err );
+			break;
+		} else {
+			list_push( list, id );
+			(void) printf( "Created thread with id %u ...\n", id );
+		}
+
+		/*	go through our list and search for joinable threads	*/
+
+		/*	print statistics	*/
+	}
+
+	while ( id = list_pop( list ) ) {
+		err = pthread_join( id, &retval );
+		if ( err ) {
+			(void) fprintf( stderr, "Error (%i) joining thread %u!\n",
+					err, id );
+		} else {
+			(void) printf( "Joined thread %u ...\n", id );
+		}
+	}
+
+	list_destroy( list );
 
 	return EXIT_SUCCESS;
+}
+
+void *do_something( void *arg ) {
+	int				rand_sec;
+	unsigned int	act_sec;
+
+	rand_sec = rand() % 30 + 30;
+	act_sec = sleep( rand_sec );
+	(void) printf( "thread %u should sleep %i and returned %u ...\n",
+			pthread_self(), rand_sec, act_sec );
+
+	return NULL;
 }
 
 /* vim: set noet sts=0 ts=4 sw=4 sr: */
