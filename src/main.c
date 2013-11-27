@@ -45,11 +45,12 @@
 void *do_something( void *arg );
 
 int main( int argc, char **argv ) {
-	int			err, i;
+	bool		run = true;
+	int			err, max_thread_count = 0, prev_thread_count = 0;
 	void		*retval;
 	pthread_t	id;
 	struct list	*list;
-	struct node	*node;
+	struct node	*cur, *node;
 
 	list = list_create();
 	if ( list == NULL ) {
@@ -59,12 +60,12 @@ int main( int argc, char **argv ) {
 
 	srand( time( NULL ) );
 
-	i = 10;
-	while ( i-- ) {
+	while ( run ) {
 		/*	create a new thread and put it into our list	*/
 		err = pthread_create( &id, NULL, do_something, NULL );
 		if ( err == EAGAIN ) {
-			continue;
+//			(void) fprintf( stderr,
+//					"Insufficient resources for creating new thread!\n" );
 		} else if ( err ) {
 			(void) fprintf( stderr, "Error (%i) creating thread!\n", err );
 			break;
@@ -74,10 +75,43 @@ int main( int argc, char **argv ) {
 		}
 
 		/*	go through our list and search for joinable threads	*/
+		for ( cur = node = list->first; node; cur = node = node->next ) {
+			err = pthread_tryjoin_np( cur->value, &retval );
+			if ( err == EBUSY ) {
+				/*	thread still running, proceed to next	*/
+//				(void) printf(
+//						"Thread %u still running, proceeding to next ...\n",
+//						cur->value );
+				continue;
+			} else if ( err ) {
+				/*	abort if something goes wrong	*/
+				(void) fprintf( stderr,
+						"Error (%i) joining thread %u!\n",
+						err, cur->value );
+				run = false;
+				break;
+			} else {
+				/*	remove from list	*/
+				(void) printf(
+						"Joined thread %u and removed from list ...\n",
+						cur->value );
+				(void) list_remove( list, cur );
+			}
+		}
 
 		/*	print statistics	*/
+		if ( prev_thread_count != list_count( list ) ) {
+			(void) printf( "Threads running: %i\n", list_count( list ) );
+			prev_thread_count = list_count( list );
+			if ( list_count( list ) > max_thread_count ) {
+				max_thread_count = list_count( list );
+			}
+		}
 	}
 
+	/*	join remaining threads	*/
+	(void) printf( "Joining %i remaining threads ...\n",
+			list_count( list ) );
 	while ( id = list_pop( list ) ) {
 		err = pthread_join( id, &retval );
 		if ( err ) {
@@ -99,8 +133,8 @@ void *do_something( void *arg ) {
 
 	rand_sec = rand() % 30 + 30;
 	act_sec = sleep( rand_sec );
-	(void) printf( "thread %u should sleep %i and returned %u ...\n",
-			pthread_self(), rand_sec, act_sec );
+//	(void) printf( "thread %u should sleep %i and returned %u ...\n",
+//			pthread_self(), rand_sec, act_sec );
 
 	return NULL;
 }
