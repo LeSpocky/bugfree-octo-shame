@@ -87,7 +87,7 @@ int main( int argc, char **argv ) {
 			break;
 		} else {
 			list_push( list, id );
-			(void) printf( "Created thread with id %u ...\n", id );
+//			(void) printf( "Created thread with id %u ...\n", id );
 		}
 
 		/*	go through our list and search for joinable threads	*/
@@ -108,9 +108,9 @@ int main( int argc, char **argv ) {
 				break;
 			} else {
 				/*	remove from list	*/
-				(void) printf(
-						"Joined thread %u and removed from list ...\n",
-						cur->value );
+//				(void) printf(
+//						"Joined thread %u and removed from list ...\n",
+//						cur->value );
 				(void) list_remove( list, cur );
 			}
 		}
@@ -139,7 +139,7 @@ int main( int argc, char **argv ) {
 			(void) fprintf( stderr, "Error (%i) joining thread %u!\n",
 					err, id );
 		} else {
-			(void) printf( "Joined thread %u ...\n", id );
+//			(void) printf( "Joined thread %u ...\n", id );
 		}
 	}
 
