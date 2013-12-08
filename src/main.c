@@ -38,7 +38,9 @@
 #include <string.h>
 #include <time.h>
 
+#define _GNU_SOURCE
 #include <pthread.h>
+
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <unistd.h>
@@ -63,7 +65,7 @@ int main( int argc, char **argv ) {
 			to_run = atoi( argv[1] );
 		}
 	}
-	(void) printf( "Will run for %i seconds ...\n", to_run );
+	(void) printf( "Will run for %ld seconds ...\n", to_run );
 
 	start_time = time( NULL );
 	srand( start_time );
@@ -102,7 +104,7 @@ int main( int argc, char **argv ) {
 			} else if ( err ) {
 				/*	abort if something goes wrong	*/
 				(void) fprintf( stderr,
-						"Error (%i) joining thread %u!\n",
+						"Error (%d) joining thread %lu!\n",
 						err, cur->value );
 				run = false;
 				break;
@@ -133,10 +135,10 @@ int main( int argc, char **argv ) {
 	/*	join remaining threads	*/
 	(void) printf( "Joining %i remaining threads ...\n",
 			list_count( list ) );
-	while ( id = list_pop( list ) ) {
+	while ( (id = list_pop( list )) ) {
 		err = pthread_join( id, &retval );
 		if ( err ) {
-			(void) fprintf( stderr, "Error (%i) joining thread %u!\n",
+			(void) fprintf( stderr, "Error (%i) joining thread %lu!\n",
 					err, id );
 		} else {
 //			(void) printf( "Joined thread %u ...\n", id );
@@ -152,9 +154,9 @@ int main( int argc, char **argv ) {
 	if ( err ) {
 		(void) fprintf( stderr,
 				"Error (%i) getting system limits: %s\n",
-				strerror( errno ) );
+				err, strerror( errno ) );
 	} else {
-		(void) printf( "RLIMIT_NPROC soft = %i, hard = %i\n",
+		(void) printf( "RLIMIT_NPROC soft = %lu, hard = %lu\n",
 				rlim.rlim_cur, rlim.rlim_max );
 	}
 
