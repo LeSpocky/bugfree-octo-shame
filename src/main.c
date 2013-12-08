@@ -38,7 +38,6 @@
 #include <string.h>
 #include <time.h>
 
-#define _GNU_SOURCE
 #include <pthread.h>
 
 #include <sys/time.h>
