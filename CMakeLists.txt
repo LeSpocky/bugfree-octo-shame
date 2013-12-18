@@ -4,6 +4,13 @@ project(bugfree-octo-shame)
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads REQUIRED)
 
+# additional compiler flags
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wundef")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshadow")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wcast-align")
+
 add_subdirectory( "src" )
 
 # documentation
