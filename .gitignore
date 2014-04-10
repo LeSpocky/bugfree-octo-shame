@@ -19,3 +19,5 @@
 
 # Temporary files
 *.swp
+*~
+*kdev4
