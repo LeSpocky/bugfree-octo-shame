@@ -6,7 +6,7 @@ find_package(Threads REQUIRED)
 
 option(WITH_BOOST "test this stuff with boost threads" OFF)
 if(WITH_BOOST)
-	find_package(Boost REQUIRED COMPONENTS thread)
+	find_package(Boost REQUIRED COMPONENTS system thread)
 endif(WITH_BOOST)
 
 # additional compiler flags

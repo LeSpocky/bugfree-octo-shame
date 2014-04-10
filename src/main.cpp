@@ -32,23 +32,37 @@
 
 #include <unistd.h>
 
-void *do_something( void *arg );
+#include <iostream>
+
+#include <boost/thread.hpp>
+
+using namespace boost;
+using namespace std;
+
+void do_something( void );
 
 int main( int argc, char **argv ) {
+	try {
+		thread t( do_something );
+
+		t.join();
+	} catch ( const std::exception &e ) {
+		cout << e.what() << endl;
+	}
 
 	return EXIT_SUCCESS;
 }
 
-void *do_something( void *arg ) {
+void do_something( void ) {
 	int				rand_sec;
 	unsigned int	act_sec;
+	;
 
 	rand_sec = rand() % 30 + 30;
 	act_sec = sleep( rand_sec );
-//	(void) printf( "thread %u should sleep %i and returned %u ...\n",
-//			pthread_self(), rand_sec, act_sec );
 
-	return NULL;
+	cout << "thread " << this_thread::get_id() << " should sleep "
+			<< rand_sec << " and returned " << act_sec << " ..." << endl;
 }
 
 /* vim: set noet sts=0 ts=4 sw=4 sr: */
