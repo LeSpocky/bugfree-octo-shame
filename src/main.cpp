@@ -28,6 +28,7 @@
  *	<http://www.gnu.org/licenses/>.
  **********************************************************************/
 
+#include <math.h>
 #include <stdlib.h>
 
 #include <unistd.h>
@@ -54,6 +55,8 @@ int main( int argc, char **argv ) {
 			cout << e.what() << endl;
 			break;
 		}
+		sleep( 1 );
+		if ( list.size() > 300 ) break;
 	}
 
 	cout << "list has " << list.size() << " elements" << endl;
@@ -68,10 +71,18 @@ int main( int argc, char **argv ) {
 }
 
 void do_something( void ) {
-	int				rand_sec;
+	int				i, j, rand_sec;
 	unsigned int	act_sec;
+	double			res;
 
-	rand_sec = rand() % 30 + 30;
+	for ( i = 0; i < 1000; i++ ) {
+		for ( j = 0; j < 100; j++ ) {
+			res = sin( i ) + cos( i );
+		}
+		this_thread::yield();
+	}
+
+	rand_sec = rand() % 200 + 200;
 	act_sec = sleep( rand_sec );
 
 	{
