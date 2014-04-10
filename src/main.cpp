@@ -33,21 +33,35 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <set>
 
 #include <boost/thread.hpp>
 
 using namespace boost;
 using namespace std;
 
+mutex m_mutex_stdout;
+
 void do_something( void );
 
 int main( int argc, char **argv ) {
-	try {
-		thread t( do_something );
+	set<thread*>	list;
 
-		t.join();
-	} catch ( const std::exception &e ) {
-		cout << e.what() << endl;
+	while ( 1 ) {
+		try {
+			list.insert( new thread( do_something ) );
+		} catch ( const std::exception &e ) {
+			cout << e.what() << endl;
+			break;
+		}
+	}
+
+	cout << "list has " << list.size() << " elements" << endl;
+
+	for ( set<thread*>::iterator it = list.begin(); it != list.end();
+			++it )
+	{
+		(*it)->join();
 	}
 
 	return EXIT_SUCCESS;
@@ -56,13 +70,16 @@ int main( int argc, char **argv ) {
 void do_something( void ) {
 	int				rand_sec;
 	unsigned int	act_sec;
-	;
 
 	rand_sec = rand() % 30 + 30;
 	act_sec = sleep( rand_sec );
 
-	cout << "thread " << this_thread::get_id() << " should sleep "
-			<< rand_sec << " and returned " << act_sec << " ..." << endl;
+	{
+		lock_guard<mutex> g(m_mutex_stdout);
+		cout << "thread " << this_thread::get_id() << " should sleep "
+				<< rand_sec << " and returned " << act_sec << " ..."
+				<< endl;
+	}
 }
 
 /* vim: set noet sts=0 ts=4 sw=4 sr: */
