@@ -4,6 +4,11 @@ project(bugfree-octo-shame)
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads REQUIRED)
 
+option(WITH_BOOST "test this stuff with boost threads" OFF)
+if(WITH_BOOST)
+	find_package(Boost REQUIRED COMPONENTS thread)
+endif(WITH_BOOST)
+
 # additional compiler flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra")

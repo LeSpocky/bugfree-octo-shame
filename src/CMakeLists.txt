@@ -12,3 +12,9 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION "bin")
+
+if(WITH_BOOST)
+	add_executable(${PROJECT_NAME}-boost "main.cpp")
+	target_link_libraries(${PROJECT_NAME}-boost ${Boost_LIBRARIES})
+	install(TARGETS ${PROJECT_NAME}-boost DESTINATION "bin")
+endif(WITH_BOOST)
