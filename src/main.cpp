@@ -29,14 +29,18 @@
  **********************************************************************/
 
 #include <math.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <unistd.h>
 
 #include <iostream>
 #include <set>
+#include <stdexcept>
 
 #include <boost/thread.hpp>
+
+#define BLOCK_SIZE	(1024 * 400)
 
 using namespace boost;
 using namespace std;
@@ -46,10 +50,20 @@ mutex m_mutex_stdout;
 void do_something( void );
 
 int main( int argc, char **argv ) {
+	uint8_t			*ptr;
+	int				i;
 	set<thread*>	list;
+	set<uint8_t*>	dummy;
 
 	while ( 1 ) {
 		try {
+			ptr = (uint8_t *) calloc( BLOCK_SIZE, 1 );
+			if ( ptr == NULL ) throw runtime_error( "malloc failed" );
+			dummy.insert( ptr );
+			for ( i = 0; i < BLOCK_SIZE; i++ ) {
+				ptr[i] = (uint8_t) i;
+			}
+
 			list.insert( new thread( do_something ) );
 		} catch ( const std::exception &e ) {
 			cout << e.what() << endl;
@@ -65,6 +79,14 @@ int main( int argc, char **argv ) {
 			++it )
 	{
 		(*it)->join();
+		list.erase( it );
+	}
+
+	for ( set<uint8_t*>::iterator it = dummy.begin(); it != dummy.end();
+			++it )
+	{
+		free( (*it) );
+		dummy.erase( it );
 	}
 
 	return EXIT_SUCCESS;
