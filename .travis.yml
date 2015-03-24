@@ -1,0 +1,21 @@
+sudo: false
+addons:
+  apt_packages:
+    - cmake
+    - libboost-thread-dev
+    - libboost-system-dev
+language: c
+branches:
+  except:
+    - gh-pages
+compiler:
+  - gcc
+  - clang
+env:
+  - BOOST="-DWITH_BOOST=OFF"
+  - BOOST="-DWITH_BOOST=ON"
+before_script:
+  - mkdir build
+  - cd build
+  - cmake $BOOST ..
+script: make && make test
