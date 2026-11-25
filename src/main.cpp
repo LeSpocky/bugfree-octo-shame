@@ -42,47 +42,47 @@
 
 #define BLOCK_SIZE	(1024 * 400)
 
-using namespace boost;
-using namespace std;
 
-mutex m_mutex_stdout;
+boost::mutex m_mutex_stdout;
+
 
 void do_something( void );
 
+
 int main( int argc, char **argv ) {
-	uint8_t			*ptr;
-	int				i;
-	set<thread*>	list;
-	set<uint8_t*>	dummy;
+	std::set<boost::thread*> list;
+	std::set<uint8_t*> dummy;
+	uint8_t *ptr;
+	int i;
 
 	while ( 1 ) {
 		try {
 			ptr = (uint8_t *) calloc( BLOCK_SIZE, 1 );
-			if ( ptr == NULL ) throw runtime_error( "malloc failed" );
+			if ( ptr == NULL ) throw std::runtime_error( "malloc failed" );
 			dummy.insert( ptr );
 			for ( i = 0; i < BLOCK_SIZE; i++ ) {
 				ptr[i] = (uint8_t) i;
 			}
 
-			list.insert( new thread( do_something ) );
+			list.insert( new boost::thread( do_something ) );
 		} catch ( const std::exception &e ) {
-			cout << e.what() << endl;
+			std::cout << e.what() << std::endl;
 			break;
 		}
 		sleep( 1 );
 		if ( list.size() > 300 ) break;
 	}
 
-	cout << "list has " << list.size() << " elements" << endl;
+	std::cout << "list has " << list.size() << " elements" << std::endl;
 
-	for ( set<thread*>::iterator it = list.begin(); it != list.end();
+	for ( std::set<boost::thread*>::iterator it = list.begin(); it != list.end();
 			++it )
 	{
 		(*it)->join();
 		list.erase( it );
 	}
 
-	for ( set<uint8_t*>::iterator it = dummy.begin(); it != dummy.end();
+	for ( std::set<uint8_t*>::iterator it = dummy.begin(); it != dummy.end();
 			++it )
 	{
 		free( (*it) );
@@ -101,17 +101,17 @@ void do_something( void ) {
 		for ( j = 0; j < 100; j++ ) {
 			res = sin( i ) + cos( i );
 		}
-		this_thread::yield();
+		boost::this_thread::yield();
 	}
 
 	rand_sec = rand() % 200 + 200;
 	act_sec = sleep( rand_sec );
 
 	{
-		lock_guard<mutex> g(m_mutex_stdout);
-		cout << "thread " << this_thread::get_id() << " should sleep "
+		boost::lock_guard<boost::mutex> g(m_mutex_stdout);
+		std::cout << "thread " << boost::this_thread::get_id() << " should sleep "
 				<< rand_sec << " and returned " << act_sec << " ..."
-				<< endl;
+				<< std::endl;
 	}
 }
 
