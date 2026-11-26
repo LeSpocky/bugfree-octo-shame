@@ -7,7 +7,7 @@ default:         # Add a default section to define the `image` keyword's default
   image: debian:13
   # TODO  Use a container prepared with the necessary build environment!
   before_script:
-    - apt update -qq && apt install -y -qq build-essential cmake
+    - apt update -qq && apt install -y -qq build-essential cmake libboost-dev libboost-system-dev libboost-thread-dev
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
