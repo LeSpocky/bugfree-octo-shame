@@ -53,7 +53,7 @@ int main( int argc, char **argv ) {
 	int				err, max_list_entries = 0, prev_node_count = 0;
 	pthread_t		id;
 	struct list		*list;
-	struct node		*cur, *node;
+	struct node		*node;
 	struct rlimit	rlim;
 	time_t			now, start_time, to_run = 120;
 	void			*retval;
@@ -92,7 +92,13 @@ int main( int argc, char **argv ) {
 		}
 
 		/*	go through our list and search for joinable threads	*/
-		for ( cur = node = list->first; node; cur = node = node->next ) {
+		for ( node = list->first; node; ) {
+			struct node *cur = node;
+
+			//	save for next iteration before possible removing to avoid use-after-free
+			node = node->next;
+
+			// (void) printf( "Trying to join thread %lu ...\n", cur->value );
 			err = pthread_tryjoin_np( cur->value, &retval );
 			if ( err == EBUSY ) {
 				/*	thread still running, proceed to next	*/

@@ -75,18 +75,18 @@ int main( int argc, char **argv ) {
 
 	std::cout << "list has " << list.size() << " elements" << std::endl;
 
-	for ( std::set<boost::thread*>::iterator it = list.begin(); it != list.end();
-			++it )
+	for ( std::set<boost::thread*>::iterator it = list.begin(); it != list.end(); )
 	{
 		(*it)->join();
-		list.erase( it );
+		it = list.erase( it );
 	}
 
-	for ( std::set<uint8_t*>::iterator it = dummy.begin(); it != dummy.end();
-			++it )
+	std::cout << "list has " << list.size() << " elements" << std::endl;
+
+	for ( std::set<uint8_t*>::iterator it = dummy.begin(); it != dummy.end(); )
 	{
 		free( (*it) );
-		dummy.erase( it );
+		it = dummy.erase( it );
 	}
 
 	return EXIT_SUCCESS;
