@@ -29,4 +29,10 @@ unit-test-job:   # This job runs in the test stage.
       - build/
     policy: pull
   script:
-    - ctest --output-on-failure --test-dir ./build
+    - ctest --output-on-failure --output-junit ./build/junit.xml --test-dir ./build
+  artifacts:
+    when: always
+    paths:
+      - build/junit.xml
+    reports:
+      junit: build/junit.xml
