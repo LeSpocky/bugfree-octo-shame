@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.5...3.10)
 project(bugfree-octo-shame)
 
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
@@ -6,7 +6,7 @@ find_package(Threads REQUIRED)
 
 option(WITH_BOOST "test this stuff with boost threads" OFF)
 if(WITH_BOOST)
-	find_package(Boost REQUIRED COMPONENTS system thread)
+	find_package(Boost REQUIRED COMPONENTS thread)
 endif(WITH_BOOST)
 
 add_subdirectory( "src" )
